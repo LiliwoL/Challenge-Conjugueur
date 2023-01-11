@@ -12,21 +12,19 @@ $T_fichier = file('listeverbe.txt');
 for ($i = 0; $i < count($T_fichier); $i++) {
     echo ("Ajout du verbe " . $T_fichier[$i] . "\n");
 
-    // Ajout dans le tableau uniquement 
+    // Ajout dans le tableau uniquement
     // si le verbe est bien du premier groupe
     // On doit "nettoyer" avant d'envoyer
     if ( checkPremierGroupe( trim($T_fichier[$i]) ) )
     {
         // Nettoyage du verbe avant ajout en base
         $T_verbes[] = strtolower(trim($T_fichier[$i]));
-    }        
+    }
 }
 
 // 2. Demande à l'utilisateur de choisir un verbe
 echo "Choisir un chiffre entre 1 et " . count($T_verbes) . "\n";
 $saisie = (int) readline();
-
-
 
 echo conjuguer( $T_verbes[$saisie] );
 

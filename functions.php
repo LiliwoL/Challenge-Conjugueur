@@ -15,6 +15,11 @@ function checkPremierGroupe (string $verb) : bool
         return false;
 }
 
+
+// **************************
+// Cas des verbes Pronominaux
+// **************************
+
 /**
  * Vérifie que c'est un verbe pronominal ou non (qui commence par se)
  *
@@ -23,8 +28,11 @@ function checkPremierGroupe (string $verb) : bool
  */
 function isVerbePronominal (string $verb) : bool
 {
+    // Prnoms possibles
+    $T_pronom = [ 'se', "s'" ];
+
     // Vérifie les deux premières lettres du verbe mises en minuscule
-    if ( strtolower(substr($verb, 0, 2)) == "se" )
+    if ( in_array( strtolower(substr($verb, 0, 2)), $T_pronom) )
         return true;
     else
         return false;
@@ -32,6 +40,9 @@ function isVerbePronominal (string $verb) : bool
 
 function conjuguerVerbePronominal( string $verb ) : string
 {
+    // On doit d'abord retirer le pronom (se)
+    $verb = substr($verb, 3);
+
     // Je
     $output = "Je me " . substr($verb, 0, -1) . "\n";
 
@@ -42,15 +53,115 @@ function conjuguerVerbePronominal( string $verb ) : string
     $output .= "Il / Elle / On se " . substr($verb, 0, -1) . "\n";
 
     // Nous
-    $output .= "Nous nous" . substr($verb, 0, -2) . "ons" . "\n";
+    $output .= "Nous nous " . substr($verb, 0, -2) . "ons" . "\n";
 
     // Vous
     $output .= "Vous vous " . substr($verb, 0, -2) . "ez" . "\n";
 
     // Ils Elles
-    $output .= "Ils / Elles se" . substr($verb, 0, -1) . "nt" . "\n";
+    $output .= "Ils / Elles se " . substr($verb, 0, -1) . "nt" . "\n";
 
     return $output;
+}
+
+function conjuguerVerbePronominalAvecVoyelle( string $verb ) : string
+{
+    // On doit d'abord retirer le pronom (s')
+    $verb = substr($verb, 2);
+
+    // Je
+    $output = "Je m'" . substr($verb, 0, -1) . "\n";
+
+    // Tu
+    $output .= "Tu t'" . substr($verb, 0, -1) . "s" . "\n";
+
+    // Il Elle On
+    $output .= "Il / Elle / On s'" . substr($verb, 0, -1) . "\n";
+
+    // Nous
+    $output .= "Nous nous " . substr($verb, 0, -2) . "ons" . "\n";
+
+    // Vous
+    $output .= "Vous vous " . substr($verb, 0, -2) . "ez" . "\n";
+
+    // Ils Elles
+    $output .= "Ils / Elles s'" . substr($verb, 0, -1) . "nt" . "\n";
+
+    return $output;
+}
+
+function conjuguerVerbeVoyelle( string $verb ) : string
+{
+    // Je
+    $output = "J'" . substr($verb, 0, -1) . "\n";
+
+    // Tu
+    $output .= "Tu " . substr($verb, 0, -1) . "s" . "\n";
+
+    // Il Elle On
+    $output .= "Il / Elle / On " . substr($verb, 0, -1) . "\n";
+
+    // Nous
+    $output .= "Nous " . substr($verb, 0, -2) . "ons" . "\n";
+
+    // Vous
+    $output .= "Vous " . substr($verb, 0, -2) . "ez" . "\n";
+
+    // Ils Elles
+    $output .= "Ils / Elles " . substr($verb, 0, -1) . "nt" . "\n";
+
+    return $output;
+}
+
+function conjuguerVerbeConsonne( string $verb ) : string
+{
+    // Je
+    $output = "Je " . substr($verb, 0, -1) . "\n";
+
+    // Tu
+    $output .= "Tu " . substr($verb, 0, -1) . "s" . "\n";
+
+    // Il Elle On
+    $output .= "Il / Elle / On " . substr($verb, 0, -1) . "\n";
+
+    // Nous
+    $output .= "Nous " . substr($verb, 0, -2) . "ons" . "\n";
+
+    // Vous
+    $output .= "Vous " . substr($verb, 0, -2) . "ez" . "\n";
+
+    // Ils Elles
+    $output .= "Ils / Elles " . substr($verb, 0, -1) . "nt" . "\n";
+
+    return $output;
+}
+
+// **************************
+// Détermine le type de verbe
+// **************************
+
+function getTypeVerbe (string $verb ) : string
+{
+    // Tableau des voyelles
+    $T_voyelles = ['a', 'e', 'i', 'o', 'u', 'y'];
+
+    // On vérifie d'abord si c'est un verbe pronominal
+    if ( isVerbePronominal($verb) )
+    {
+        // Vérifie la première lettre après le prnom (me ou se) mise en minuscule
+        if ( in_array( strtolower(substr($verb, 2, 1)), $T_voyelles) )
+            $typeVerbe = "PronominalVoyelle";
+        else
+            $typeVerbe = "Pronominal";
+    }else{
+        // Vérifie la première lettre
+        if ( in_array( strtolower(substr($verb, 0, 1)), $T_voyelles) )
+            $typeVerbe = "Voyelle";
+        else
+            $typeVerbe = "Consonne";
+    }
+
+    return $typeVerbe;
 }
 
 
@@ -60,33 +171,32 @@ function conjuguerVerbePronominal( string $verb ) : string
  * @param string $verb
  * @return string
  */
-function conjuguer( string $verb) : string
+function conjuguer( string $verb ) : string
 {
+    // Nettoyage du verbe
+    $verb = trim($verb);
 
-    // Test si verbe pronominal
-    if ( isVerbePronominal($verb) )
-    {
-        $output = conjuguerVerbePronominal($verb);
-    }
-    else
-    {
-        // Je
-        $output = "Je " . substr($verb, 0, -1) . "\n";
+    // Détermine le type de verbe
+    $typeVerbe = getTypeVerbe($verb);
 
-        // Tu
-        $output .= "Tu " . substr($verb, 0, -1) . "s" . "\n";
+    echo "Le type de verbe est: $typeVerbe \n";
 
-        // Il Elle On
-        $output .= "Il / Elle / On " . substr($verb, 0, -1) . "\n";
+    switch ($typeVerbe){
+        case 'Pronominal':
+            $output = conjuguerVerbePronominal($verb);
+            break;
 
-        // Nous
-        $output .= "Nous " . substr($verb, 0, -2) . "ons" . "\n";
+        case 'PronominalVoyelle':
+            $output = conjuguerVerbePronominalAvecVoyelle($verb);
+            break;
 
-        // Vous
-        $output .= "Vous " . substr($verb, 0, -2) . "ez" . "\n";
+        case 'Voyelle':
+            $output = conjuguerVerbeVoyelle($verb);
+            break;
 
-        // Ils Elles
-        $output .= "Ils / Elles " . substr($verb, 0, -1) . "nt" . "\n";
+        case 'Consonne':
+            $output = conjuguerVerbePronominal($verb);
+            break;
     }
 
     return $output;
