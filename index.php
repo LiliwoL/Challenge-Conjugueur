@@ -1,30 +1,33 @@
 <?php
 
+// 0. Inclusions
+require_once('./functions.php');
+
 // 0. Initialisation des variables
-$T_verbes = new array();
+$T_verbes = [];
 
 // 1. Lecture de la liste des verbes
-$t = file('listeverbe.txt');
+$T_fichier = file('listeverbe.txt');
 
-for ($i = 0; $i < count($t); $i++) {
-    echo ("Ajout du verbe " . $t[$i] . '\n');
+for ($i = 0; $i < count($T_fichier); $i++) {
+    echo ("Ajout du verbe " . $T_fichier[$i] . "\n");
 
-    // Ajout dans le tableau uniquement si le verbe est bien du premier groupe
-    if ( checkPremierGroupe($t[$i]) )
-        $T_verbes[] = $t[$i];
+    // Ajout dans le tableau uniquement 
+    // si le verbe est bien du premier groupe
+    // On doit "nettoyer" avant d'envoyer
+    if ( checkPremierGroupe( trim($T_fichier[$i]) ) )
+    {
+        // Nettoyage du verbe avant ajout en base
+        $T_verbes[] = strtolower(trim($T_fichier[$i]));
+    }        
 }
 
-// 2. Fonction de conjugaison
+// 2. Demande à l'utilisateur de choisir un verbe
+echo "Choisir un chiffre entre 1 et " . count($T_verbes) . "\n";
+$saisie = (int) readline();
 
 
-/**
- * 
- */
-function checkPremierGroupe (string $verb) : bool
-{
-    // Vérifie les deux dernières lettres du verbe mises en minuscule
-    if ( strtolower(substr($verb, -2)) == "er" )
-        return true;
-    else
-        return false;
-}
+
+echo conjuguer( $T_verbes[$saisie] );
+
+
