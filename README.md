@@ -1,7 +1,8 @@
-# Challenge-Conjugueur
-Un challenge pour créer un conjugueur de verbes du premier groupe
+# Challenge-PHP-Conjugueur
 
-Lire les verbes stockés dans le fichier **listeverbe.txt**, et les conjuguer.
+Un challenge pour créer un conjugueur de verbes du premier groupe avec le langage PHP en mode CLI.
+
+Lire les verbes stockés dans le fichier **listeverbe.txt**, et les conjuguer au présent.
 
 Pour parcourir un fichier:
 ```php
